@@ -145,17 +145,16 @@ def main():
         size = len(opcode_list)
 
     highest_sig = 0
-    # for sequence in permutations(range(5, 10)):
-    #     ov = 0
-    #     for n in range(5):
-    #         opcode_list, ov = parser(opcode_list, sequence[n], output_var=ov)
-    #     for n in range(100):
-    #         opcode_list, ov = parser(opcode_list, ov, output_var=ov)
-    #         print(opcode_list, ov)
-    #     if ov>highest_sig:
-    #         print(sequence, ov)
-    #         highest_sig = ov
-    # print(highest_sig)
+    for sequence in permutations(range(0, 5)):
+        ov = 0
+        for n in range(5):
+            opcode_list, PC, ov = parser(opcode_list, 0, (sequence[n], ov))
+        if ov>highest_sig:
+            print(sequence, ov)
+            highest_sig = ov
+
+    print("Highest Value:", highest_sig)
+    highest_sig = 0
     for sequence in permutations(range(5, 10)):
         ov = 0
         PC1 = 0
