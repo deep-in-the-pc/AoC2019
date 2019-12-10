@@ -6,6 +6,7 @@ def parser(opcode_list_r, PC, input_var):
     opcode = opcode_list_r[PC]
     relative_base = 0
     reset = 0
+    sizeofopcode = len(opcode_list_r)
     while(opcode != 99):
         #print(opcode, PC, input_var, opcode_list_r)
         if opcode%100 == 1:
@@ -29,8 +30,9 @@ def parser(opcode_list_r, PC, input_var):
 
                 #print("ADDRESS: ", A, "C: ", C, "B: ", B)
 
-                if(A>=len(opcode_list_r)):
-                    opcode_list_r.extend([0 for x in range(1+A-len(opcode_list_r))])
+                if(A>=sizeofopcode):
+                    opcode_list_r.extend([0 for x in range(1+A-sizeofopcode)])
+                    sizeofopcode = len(opcode_list_r)
 
                 opcode_list_r[A] = C + B
                 PC = PC + 4
@@ -60,8 +62,9 @@ def parser(opcode_list_r, PC, input_var):
                     
                 #print("ADDRESS: ", A, "C: ", C, "B: ", B)
 
-                if (A >= len(opcode_list_r)):
-                    opcode_list_r.extend([0 for x in range(1 + A - len(opcode_list_r))])
+                if (A >= sizeofopcode):
+                    opcode_list_r.extend([0 for x in range(1 + A - sizeofopcode)])
+                    sizeofopcode = len(opcode_list_r)
 
                 opcode_list_r[A] = C * B
                 PC = PC + 4
@@ -81,8 +84,9 @@ def parser(opcode_list_r, PC, input_var):
 
                 #print("ADDRESS: ", C)
 
-                if(C>=len(opcode_list_r)):
-                    opcode_list_r.extend([0 for x in range(1+C-len(opcode_list_r))])
+                if(C>=sizeofopcode):
+                    opcode_list_r.extend([0 for x in range(1+C-sizeofopcode)])
+                    sizeofopcode = len(opcode_list_r)
 
                 opcode_list_r[C] = input_var[0]
 
@@ -103,8 +107,9 @@ def parser(opcode_list_r, PC, input_var):
 
                 # print("ADDRESS: ", C)
 
-                if(C>=len(opcode_list_r)):
-                    opcode_list_r.extend([0 for x in range(1+C-len(opcode_list_r))])
+                if(C>=sizeofopcode):
+                    opcode_list_r.extend([0 for x in range(1+C-sizeofopcode)])
+                    sizeofopcode = len(opcode_list_r)
 
                 output_var = opcode_list_r[C]
 
@@ -189,8 +194,9 @@ def parser(opcode_list_r, PC, input_var):
 
                 #print("ADDRESS: ", A, "C: ", C, "B: ", B)
 
-                if (A >= len(opcode_list_r)):
-                    opcode_list_r.extend([0 for x in range(1 + A - len(opcode_list_r))])
+                if (A >= sizeofopcode):
+                    opcode_list_r.extend([0 for x in range(1 + A - sizeofopcode)])
+                    sizeofopcode = len(opcode_list_r)
 
                 if C < B:
                     opcode_list_r[A] = 1
@@ -223,8 +229,9 @@ def parser(opcode_list_r, PC, input_var):
 
                 # print("ADDRESS: ", A, "C: ", C, "B: ", B)
 
-                if (A >= len(opcode_list_r)):
-                    opcode_list_r.extend([0 for x in range(1 + A - len(opcode_list_r))])
+                if (A >= sizeofopcode):
+                    opcode_list_r.extend([0 for x in range(1 + A - sizeofopcode)])
+                    sizeofopcode = len(opcode_list_r)
 
                 if C == B:
                     opcode_list_r[A] = 1
