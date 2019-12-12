@@ -1,16 +1,16 @@
 import math
 from itertools import permutations
 import numpy as np
+import sys
 
-def parser(opcode_list_r, PC, input_var):
+def parser(opcode_list_r, PC, input_var, relative_base=0):
     sendOutput = 0
     output_var = -1
     opcode = opcode_list_r[PC]
-    relative_base = 0
     reset = 0
     sizeofopcode = len(opcode_list_r)
     while (opcode != 99):
-        #print(opcode, PC, input_var, opcode_list_r)
+        #print(opcode, PC, input_var, relative_base, opcode_list_r)
         if opcode % 100 == 1:
             try:
                 if opcode > 100 and str(opcode)[-3] == '2':
@@ -130,16 +130,14 @@ def parser(opcode_list_r, PC, input_var):
 
                 if opcode > 100 and str(opcode)[-3] == '2':
                     C = relative_base + opcode_list_r[PC + 1]
-
-                if opcode > 100 and str(opcode)[-3] == '1':
+                elif opcode > 100 and str(opcode)[-3] == '1':
                     output_var = opcode_list_r[PC + 1]
                     PC = PC + 2
-                    print(output_var)
-                    return opcode_list_r, PC, output_var
+                    #print(output_var)
+                    return opcode_list_r, PC, output_var,relative_base
                 else:
                     C = opcode_list_r[PC + 1]
-
-                #print("ADDRESS: ", C)
+                #print("opcode:", opcode, "ADDRESS: ", C)
 
                 if (C >= sizeofopcode):
                     opcode_list_r.extend([0 for x in range(1 + C - sizeofopcode)])
@@ -149,9 +147,9 @@ def parser(opcode_list_r, PC, input_var):
 
                 PC = PC + 2
 
-                print(output_var)
+                #print(output_var)
 
-                return opcode_list_r, PC, output_var
+                return opcode_list_r, PC, output_var, relative_base
             except:
                 return [0]
 
@@ -195,8 +193,7 @@ def parser(opcode_list_r, PC, input_var):
                     B = opcode_list_r[PC + 2]
                 else:
                     B = opcode_list_r[opcode_list_r[PC + 2]]
-
-                # print("C: ", C, "B: ", B)
+                #print("C: ", C, "B: ", B)
 
                 if C == 0:
                     PC = B
@@ -313,7 +310,7 @@ def parser(opcode_list_r, PC, input_var):
                 else:
                     C = opcode_list_r[opcode_list_r[PC + 1]]
 
-                # print("C: ", C)
+                #print("C: ", C)
 
                 relative_base = relative_base + C
 
@@ -323,7 +320,7 @@ def parser(opcode_list_r, PC, input_var):
                 return [0]
 
         opcode = opcode_list_r[PC]
-    return opcode_list_r, -1, output_var
+    return opcode_list_r, -1, output_var, relative_base
 
 def gridMapColour(map, position):
 
@@ -356,19 +353,20 @@ def main():
 
     opcode_list = opcode_list_og[:]
 
-    gridMap = np.zeros((200, 200))
-    position = (99, 99)
+    gridMap = np.zeros((50, 10))
+    position = (0, 7)
     angle = 90
     PC = 0
+    rb = 0
     countPaint = []
     gridMap = gridMapPaint(gridMap, position, 1)
     while(PC != -1):
         colour = gridMapColour(gridMap, position)
-        opcode_list, PC, ov = parser(opcode_list, PC, (colour, 0))
+        opcode_list, PC, ov, rb = parser(opcode_list, PC, (colour, 0), rb)
         if(PC == -1):
             break
         newColour = ov
-        opcode_list, PC, ov = parser(opcode_list, PC, (colour, 0))
+        opcode_list, PC, ov, rb = parser(opcode_list, PC, (colour, 0), rb)
         if(PC == -1):
             break
         newDirection = ov
@@ -380,12 +378,19 @@ def main():
             angle -= 90
             if(angle<0):
                 angle = 270
-        gridMap = gridMapPaint(gridMap, position, newColour)
+        gridMap = gridMapPaint(gridMap, position, int(newColour))
         if(position not in countPaint):
             countPaint.append(position)
         position = gridMapMove(position, angle)
-        print(position, angle)
-    print(len(countPaint), gridMap)
+        #print(position, angle)
+
+    with open("output", 'w+') as file:
+        for line in np.rot90(gridMap).tolist():
+            line = ['O' if x == 1 else ' ' for x in line]
+            file.write(str(line).replace('[', '').replace('\'', '').replace(',', '').replace(']', '')+"\n")
+            print(str(line).replace('[', '').replace('\'', '').replace(',', '').replace(']', ''))
+
+        print(len(countPaint))
 
 if __name__ == "__main__":
     main()
